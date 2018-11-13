@@ -7,14 +7,15 @@ var characterSelect = true;
 var fighting = false;
 var enemySelect = false;
 var selectedCharacter = "";
-var opponet = "";
+var opponent = "";
+var opponentsDefeated = 0;
 //Character Objects
-    //Character Name
-    //Health Points
-    //Attack Power
-    //Counter Attack Power
-    //ID of div
-    //image source
+//Character Name
+//Health Points
+//Attack Power
+//Counter Attack Power
+//ID of div
+//image source
 
 var obiwan = {
     characterName: "Obi-Wan Kenobi",
@@ -63,8 +64,10 @@ function restart() {
     fighting = false;
     enemySelect = false;
     selectedCharacter = "";
+    opponent = "";
     //move all characters to select area
-    for(var i = 0; i<characters.length; i++) {
+    for (var i = 0; i < characters.length; i++) {
+        characters[i].divID.show();
         characters[i].divID.detach().appendTo("#character-select");
     }
 }
@@ -98,12 +101,13 @@ for (var i = 0; i < characters.length; i++) {
 $(".character").on("click", function () {
     // if in character selection
     if (characterSelect) {
-        selectedCharacter = $(this).attr("object");
+        var charName = $(this).attr("object");
         // console.log(selectedCharacter);
         //put selected character in #character and the rest in #enemies
         for (var i = 0; i < characters.length; i++) {
-            if (characters[i].characterName === selectedCharacter) {
+            if (characters[i].characterName === charName) {
                 characters[i].divID.detach().appendTo("#character");
+                selectedCharacter = characters[i];
             } else {
                 characters[i].divID.detach().appendTo("#enemies");
             }
@@ -114,8 +118,8 @@ $(".character").on("click", function () {
         var defender = $(this).attr("object");
         for (var i = 0; i < characters.length; i++) {
             if (characters[i].characterName === defender) {
-                opponet = characters[i];
-                // console.log(opponet);
+                opponent = characters[i];
+                // console.log(opponent);
                 characters[i].divID.detach().appendTo("#defender");
                 break;
             }
@@ -126,6 +130,35 @@ $(".character").on("click", function () {
 });
 
 //Attack Button onClick
-$("#attack").on("click", function() {
-    
+$("#attack").on("click", function () {
+    if (fighting) {
+        //increase damage by attackpower
+        damage += selectedCharacter.attackPower;
+        //reduce opponent's health by damage
+        opponent.healthPoints -= damage;
+        //check if opponent died
+        if (opponent.healthPoints <= 0) {
+            opponent.divID.hide();
+            fighting = false;
+            enemySelect = true;
+            opponentsDefeated++;
+            $("#message").text("You defeated " + opponent.characterName + ", you can choose to fight another enemy.");
+            if(opponentsDefeated >= 3) {
+                //you won!
+                $("#message").text("You Won! Game Over!");
+            }
+        } else {
+            $("#defender div:last-child div:last-child").text(opponent.healthPoints);
+            $("#message").text("You attacked " + opponent.characterName + " for " + damage + " damage. \n" + opponent.characterName + " attacked you back for " + opponent.counterAttack + " damage.");
+            selectedCharacter.healthPoints -= opponent.counterAttack;
+            $("#character div div:last-child").text(selectedCharacter.healthPoints);
+            if(selectedCharacter.healthPoints <= 0){
+                //game over!
+            }
+        }
+    } else if (opponentsDefeated >= 3) {
+        $("#message").text("You Won! Game Over!");
+    }else {
+        $("#message").text("No enemy here.");
+    }
 });
