@@ -86,15 +86,19 @@ function restart() {
 //Creating Character Elements
 $("#character-select").append("<div id='obiwan-div'></div>");
 obiwan.divID = $("#obiwan-div");
+$("#obiwan-div").html('<img src="assets/images/obiwan.jpg" alt="Obi-Wan Kenobi" class="character-portrait">');
 
 $("#character-select").append("<div id='luke-div'></div>");
 luke.divID = $("#luke-div");
+$("#luke-div").html('<img src="assets/images/luke.jpg" alt="Luke Skywalker" class="character-portrait">');
 
 $("#character-select").append("<div id='maul-div'></div>");
 maul.divID = $("#maul-div");
+$("#maul-div").html('<img src="assets/images/maul.jpg" alt="Darth Maul" class="character-portrait">');
 
 $("#character-select").append("<div id='sidious-div'></div>");
 sidious.divID = $("#sidious-div");
+$("#sidious-div").html('<img src="assets/images/sidious.jpg" alt="Darth Sidious" class="character-portrait">');
 // console.log(characters);
 
 //Add to character elements
@@ -102,7 +106,7 @@ for (var i = 0; i < characters.length; i++) {
     // console.log(characters[i]);
     characters[i].divID.addClass("character border text-center p-2");
     characters[i].divID.attr("object", characters[i].characterName);
-    characters[i].divID.append("<div>" + characters[i].characterName + "</div>");
+    characters[i].divID.prepend("<div>" + characters[i].characterName + "</div>");
     characters[i].divID.append("<div>" + characters[i].healthPoints + "</div>");
     // console.log(characters[i].divID.attr("object"));
 }
@@ -161,7 +165,7 @@ $("#attack").on("click", function () {
             }
         } else {
             $("#defender div:last-child div:last-child").text(opponent.healthPoints);
-            $("#message").text("You attacked " + opponent.characterName + " for " + damage + " damage. \n" + opponent.characterName + " attacked you back for " + opponent.counterAttack + " damage.");
+            $("#message").html("You attacked " + opponent.characterName + " for " + damage + " damage. <br>" + opponent.characterName + " attacked you back for " + opponent.counterAttack + " damage.");
             selectedCharacter.healthPoints -= opponent.counterAttack;
             $("#character div div:last-child").text(selectedCharacter.healthPoints);
             if(selectedCharacter.healthPoints <= 0){
