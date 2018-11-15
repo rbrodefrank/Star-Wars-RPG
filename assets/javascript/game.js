@@ -24,6 +24,7 @@ var obiwan = {
     counterAttack: 20,
     divID: "",
     audio: new Audio("assets/sounds/obiwan.mp3"),
+    victoryAudio: new Audio("assets/sounds/victoryJedi.mp3"),
 }
 characters.push(obiwan);
 
@@ -34,6 +35,7 @@ var yoda = {
     counterAttack: 25,
     divID: "",
     audio: new Audio("assets/sounds/yoda.mp3"),
+    victoryAudio: new Audio("assets/sounds/victoryJedi.mp3"),
 }
 characters.push(yoda);
 
@@ -44,6 +46,7 @@ var maul = {
     counterAttack: 5,
     divID: "",
     audio: new Audio("assets/sounds/maul.mp3"),
+    victoryAudio: new Audio("assets/sounds/victorySith.mp3"),
 }
 characters.push(maul);
 
@@ -54,6 +57,7 @@ var sidious = {
     counterAttack: 15,
     divID: "",
     audio: new Audio("assets/sounds/sidious.mp3"),
+    victoryAudio: new Audio("assets/sounds/victorySith.mp3"),
 }
 characters.push(sidious);
 
@@ -88,6 +92,7 @@ function restart() {
         characters[i].divID.detach().appendTo("#character-select");
     }
 }
+
 var saberOn = new Audio("assets/sounds/SaberOn.mp3");
 var wilhelm = new Audio("assets/sounds/wilhelm.mp3");
 var saberSounds = [new Audio("assets/sounds/clash0.mp3"),
@@ -186,6 +191,7 @@ $("#attack").on("click", function () {
                 fighting = false;
                 $("#message").text("You Won! Game Over!");
                 $("#restart-btn").show();
+                selectedCharacter.victoryAudio.play();
             }
         } else {
             $("#defender div:last-child div:last-child").text(opponent.healthPoints);
@@ -216,6 +222,9 @@ $("#attack").on("click", function () {
 
 //Restart Button onClick
 $("#restart-btn").on("click", function () {
+    selectedCharacter.victoryAudio.pause();
+    selectedCharacter.victoryAudio.currentTime = 0;
+    //console.log(selectedCharacter.victoryAudio);
     restart();
 });
 
