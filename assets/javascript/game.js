@@ -23,24 +23,27 @@ var obiwan = {
     attackPower: 8,
     counterAttack: 20,
     divID: "",
+    audio: new Audio("assets/sounds/obiwan.mp3"),
 }
 characters.push(obiwan);
 
-var luke = {
-    characterName: "Luke Skywalker",
+var yoda = {
+    characterName: "Yoda",
     healthPoints: 180,
     attackPower: 4,
     counterAttack: 25,
     divID: "",
+    audio: new Audio("assets/sounds/yoda.mp3"),
 }
-characters.push(luke);
+characters.push(yoda);
 
 var maul = {
     characterName: "Darth Maul",
     healthPoints: 100,
-    attackPower: 15,
+    attackPower: 17,
     counterAttack: 5,
     divID: "",
+    audio: new Audio("assets/sounds/maul.mp3"),
 }
 characters.push(maul);
 
@@ -50,6 +53,7 @@ var sidious = {
     attackPower: 10,
     counterAttack: 15,
     divID: "",
+    audio: new Audio("assets/sounds/sidious.mp3"),
 }
 characters.push(sidious);
 
@@ -60,7 +64,7 @@ $("#restart-btn").hide();
 function restart() {
     //reset variables
     obiwan.healthPoints = 120;
-    luke.healthPoints = 180;
+    yoda.healthPoints = 180;
     maul.healthPoints = 100;
     sidious.healthPoints = 140;
     damage = 0;
@@ -73,24 +77,38 @@ function restart() {
     $("#restart-btn").hide();
 
     $("#obiwan-div div:last-child").text(obiwan.healthPoints);
-    $("#luke-div div:last-child").text(luke.healthPoints);
+    $("#yoda-div div:last-child").text(yoda.healthPoints);
     $("#maul-div div:last-child").text(maul.healthPoints);
     $("#sidious-div div:last-child").text(sidious.healthPoints);
     //move all characters to select area
     for (var i = 0; i < characters.length; i++) {
         characters[i].divID.show();
+        characters[i].divID[0].style.borderColor = "green";
+        characters[i].divID[0].style.backgroundColor = "white";
         characters[i].divID.detach().appendTo("#character-select");
     }
 }
+var saberOn = new Audio("assets/sounds/SaberOn.mp3");
+var wilhelm = new Audio("assets/sounds/wilhelm.mp3");
+var saberSounds = [new Audio("assets/sounds/clash0.mp3"),
+new Audio("assets/sounds/clash1.mp3"),
+new Audio("assets/sounds/clash2.mp3"),
+new Audio("assets/sounds/clash3.mp3")]
+
+function saberFight() {
+    var rand = Math.floor(Math.random()*4);
+    saberSounds[rand].play();
+}
+
 
 //Creating Character Elements
 $("#character-select").append("<div id='obiwan-div'></div>");
 obiwan.divID = $("#obiwan-div");
 $("#obiwan-div").html('<img src="assets/images/obiwan.jpg" alt="Obi-Wan Kenobi" class="character-portrait">');
 
-$("#character-select").append("<div id='luke-div'></div>");
-luke.divID = $("#luke-div");
-$("#luke-div").html('<img src="assets/images/luke.jpg" alt="Luke Skywalker" class="character-portrait">');
+$("#character-select").append("<div id='yoda-div'></div>");
+yoda.divID = $("#yoda-div");
+$("#yoda-div").html('<img src="assets/images/yoda.jpg" alt="Yoda" class="character-portrait">');
 
 $("#character-select").append("<div id='maul-div'></div>");
 maul.divID = $("#maul-div");
@@ -104,7 +122,7 @@ $("#sidious-div").html('<img src="assets/images/sidious.jpg" alt="Darth Sidious"
 //Add to character elements
 for (var i = 0; i < characters.length; i++) {
     // console.log(characters[i]);
-    characters[i].divID.addClass("character border text-center p-2");
+    characters[i].divID.addClass("character text-center p-2");
     characters[i].divID.attr("object", characters[i].characterName);
     characters[i].divID.prepend("<div>" + characters[i].characterName + "</div>");
     characters[i].divID.append("<div>" + characters[i].healthPoints + "</div>");
@@ -122,7 +140,11 @@ $(".character").on("click", function () {
             if (characters[i].characterName === charName) {
                 characters[i].divID.detach().appendTo("#character");
                 selectedCharacter = characters[i];
+                characters[i].audio.play();
             } else {
+                // console.log(characters[i].divID);
+                characters[i].divID[0].style.borderColor = "black";
+                characters[i].divID[0].style.backgroundColor = "red";
                 characters[i].divID.detach().appendTo("#enemies");
             }
         }
@@ -135,6 +157,7 @@ $(".character").on("click", function () {
                 opponent = characters[i];
                 // console.log(opponent);
                 characters[i].divID.detach().appendTo("#defender");
+                saberOn.play();
                 break;
             }
         }
@@ -156,8 +179,9 @@ $("#attack").on("click", function () {
             fighting = false;
             enemySelect = true;
             opponentsDefeated++;
+            saberFight();
             $("#message").text("You defeated " + opponent.characterName + ", you can choose to fight another enemy.");
-            if(opponentsDefeated >= 3) {
+            if (opponentsDefeated >= 3) {
                 //you won!
                 fighting = false;
                 $("#message").text("You Won! Game Over!");
@@ -168,11 +192,15 @@ $("#attack").on("click", function () {
             $("#message").html("You attacked " + opponent.characterName + " for " + damage + " damage. <br>" + opponent.characterName + " attacked you back for " + opponent.counterAttack + " damage.");
             selectedCharacter.healthPoints -= opponent.counterAttack;
             $("#character div div:last-child").text(selectedCharacter.healthPoints);
-            if(selectedCharacter.healthPoints <= 0){
+            if (selectedCharacter.healthPoints <= 0) {
                 //game over!
                 fighting = false;
+                wilhelm.play();
                 $("#message").text("You Lost! Game Over!");
                 $("#restart-btn").show();
+
+            } else {
+                saberFight();
             }
         }
     } else if (opponentsDefeated >= 3) {
@@ -181,7 +209,7 @@ $("#attack").on("click", function () {
     } else if (selectedCharacter.healthPoints <= 0) {
         $("#message").text("You Lost! Game Over!");
         $("#restart-btn").show();
-    }else {
+    } else {
         $("#message").text("No enemy here.");
     }
 });
